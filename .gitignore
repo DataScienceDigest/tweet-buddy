@@ -1,0 +1,28 @@
+# Ignore virtual environment folders
+bot_venv/
+bot_env/
+*.env
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore system files
+.DS_Store        # macOS
+Thumbs.db        # Windows
+*.log            # Log files
+
+# Ignore IDE and editor settings
+.vscode/
+.idea/
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore other files that could be generated
+*.bak
+*.swp
+
+*.mp4
