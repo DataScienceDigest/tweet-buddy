@@ -7,7 +7,7 @@ User=ubuntu
 Group=www-data
 WorkingDirectory=/home/ubuntu/tweet-buddy
 
-ExecStart=/home/ubuntu/env/bin/gunicorn --access-logfile - --workers 3 --bind unix:/home/ubuntu/tweet-buddy/app.sock app:app
+ExecStart=/home/ubuntu/env/bin/gunicorn --access-logfile - --workers 3 --bind unix:/home/ubuntu/tweet-buddy/app.sock main:app
    
 [Install]
 WantedBy=multi-user.target
