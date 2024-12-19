@@ -15,7 +15,7 @@ app = Flask(__name__)
 
 # Setup the Twikit client
 client = Client('en-US')
-client.load_cookies(r'C:\Users\hp\Documents\telegram bot test\online-twitter\@twt666394923-cookies.json')
+client.load_cookies(r'@twt666394923-cookies.json')
 
 # Global event loop and iterator
 loop = asyncio.get_event_loop()
@@ -175,36 +175,6 @@ def download_media():
     except Exception as e:
         return f"An error occurred: {str(e)}", 500
 
-# def download_media():
-#     """Download a media file from a given URL."""
-#     media_url = request.args.get('media_url')  # Get the media URL from query parameters
-#     if not media_url:
-#         return "Media URL is required!", 400
-
-#     try:
-#         # Fetch the media file
-#         response = requests.get(media_url, stream=True)
-#         if response.status_code != 200:
-#             return f"Failed to fetch media: {response.status_code}", response.status_code
-
-#         # Extract the file extension
-#         file_extension = os.path.splitext(media_url)[-1].lower()
-#         # Check if the file is an image or already has an extension
-#         if file_extension in ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.mp4', '.mov', '.avi']:
-#             filename = media_url.split('/')[-1]  # Use the original filename
-#         else:
-#             filename = f"{media_url.split('/')[-1]}.mp4" 
-#         # Create a streaming response
-#         return Response(
-#             response.iter_content(chunk_size=8192),
-#             content_type=response.headers.get('Content-Type', 'application/octet-stream'),
-#             headers={
-#                 'Content-Disposition': f'attachment; filename={filename}'
-#             }
-#         )
-#     except Exception as e:
-#         return f"An error occurred: {str(e)}", 500
-
 
 if __name__ == '__main__':
-    app.run(host='172.20.10.3',debug=True)
+    app.run(host='0.0.0.0',port=80,debug=True)
