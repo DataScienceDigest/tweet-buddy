@@ -3,3 +3,4 @@ Flask
 twikit
 nest-asyncio
 requests
+gunicorn
