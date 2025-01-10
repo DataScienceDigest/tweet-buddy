@@ -4,3 +4,4 @@ twikit
 nest-asyncio
 requests
 gunicorn
+beautifulsoup4
