@@ -3,20 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Video Downloader</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .video-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .video-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            width: 300px;
+            text-align: center;
+        }
+        .video-item img {
+            width: 100%;
+            height: auto;
+        }
+        .video-item .title {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .video-item .details {
+            font-size: 14px;
+            color: gray;
+        }
+    </style>
 </head>
 <body>
-    <div>
-        <h1>Video Downloader</h1>
-        <!-- Video links with download buttons -->
-        {% for i in video_links %}
-        <div>
-            <p>{{ i }}</p>
-            <button onclick="fetchDownloadableLink('{{ i }}')">Download</button>
+    <form action="" method="post">
+        <label for="site_url">Enter Website URL:</label>
+        <input type="text" id="site_url" name="site_url" value="{{video_url}}">
+        <button type="submit">Submit</button>
+    </form>
+    <h1>Video Downloader</h1>
+
+    <div class="video-list">
+        <!-- Loop through video links and display them -->
+        {% for video in video_links %}
+        <div class="video-item">
+            <a href="{{ video.link }}" target="_blank">
+                <img src="{{ video.thumbnail }}" alt="{{ video.title }}">
+            </a>
+            <div class="title">{{ video.title }}</div>
+            <div class="details">
+                <span><i class="fa fa-clock-o"></i> {{ video.duration }}</span><br>
+                <span><i class="fa fa-eye"></i> {{ video.views }}</span>
+            </div>
+            <button onclick="fetchDownloadableLink('{{ video.link }}')">Download</button>
         </div>
         {% endfor %}
     </div>
-
+    <!-- pagination -->
+    <div class="pagination">
+        <button type="button" onclick="submitFormWithPage(1)">1</button>
+        <button type="button" onclick="submitFormWithPage(2)">2</button>
+        <button type="button" onclick="submitFormWithPage(3)">3</button>
+        <button type="button" onclick="submitFormWithPage(4)">4</button>
+        <button type="button" onclick="submitFormWithPage(5)">5</button>
+        <button type="button" onclick="submitFormWithPage(6)">6</button>
+        <button type="button" onclick="submitFormWithPage(7)">7</button>
+        <button type="button" onclick="submitFormWithPage(8)">8</button>
+        <button type="button" onclick="submitFormWithPage(9)">9</button>
+        <button type="button" onclick="submitFormWithPage(10)">10</button>
+        <button type="button" onclick="submitFormWithPage(currentPage + 1)">Next</button>
+    </div>
+    
+    <script>
+        let currentPage = 1;
+    
+        function submitFormWithPage(pageNumber) {
+            currentPage = pageNumber;
+            const siteUrlField = document.getElementById('site_url');
+            
+            const baseUrl = siteUrlField.value.trim();
+            
+            if (baseUrl) {
+                console.log(baseUrl,'+++++++');
+                baseUrl1 = baseUrl.replace(/\/page\/\d+$/, '');
+                const updatedUrl = `${baseUrl1}/page/${pageNumber}`;
+                siteUrlField.value = updatedUrl;
+                // Submit the form
+                siteUrlField.form.submit();
+            } else {
+                alert('Please enter a website URL first.');
+            }
+        }
+    </script>
+    
     <script>
         // Function to fetch downloadable link and trigger the download
         function fetchDownloadableLink(videoUrl) {
@@ -46,5 +121,4 @@
         }
     </script>
 </body>
-
 </html>

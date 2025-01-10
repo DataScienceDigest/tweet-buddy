@@ -8,7 +8,8 @@ import os
 import tempfile
 from datetime import datetime
 import yt_dlp
-
+import requests
+from bs4 import BeautifulSoup
 # flexcnic
 # Bonegggg
 # Fix nested event loop issue in Flask
@@ -203,7 +204,7 @@ def download_media():
 @app.route('/get_downloadable_link', methods=['GET'])
 def get_downloadable_link():
     video_url = request.args.get('video_url')
-    print(video_url,'================')
+    print(video_url)
     if not video_url:
         return jsonify({'success': False, 'error': 'Video URL is required!'}), 400
 
@@ -235,10 +236,39 @@ def get_downloadable_link():
 @app.route('/videos', methods=['GET','POST'])
 def videos():
     """Fetch next batch of tweets."""
-    # scraping code would go here 
-    video_links= ['https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_video','https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_video','https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_video','https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_video','https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_video','https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_video']
+    if request.method == 'POST':
+        video_url = request.form.get('site_url')
+        print(video_url,'===+++======')
         
-    return render_template('videos.html',video_links=video_links)
+        # Send a GET request to the website
+        response = requests.get(video_url)
+
+        # Check if the request was successful
+        if response.status_code == 200:
+            # Parse the HTML content of the webpage
+            soup = BeautifulSoup(response.text, 'html.parser')
+            
+            li_tags = soup.find_all('li', class_='video')
+        
+        # Extract data into a list of dictionaries
+        video_links = []
+        for li in li_tags:
+            link = li.find('a', class_='thumb')['href']
+            title = li.find('a', class_='title').text.strip()
+            thumbnail = li.find('img')['src']
+            duration = li.find('div', class_='time').text.strip()
+            views = li.find('div', class_='view').text.strip()
+            
+            video_links.append({
+                'link': link,
+                'title': title,
+                'thumbnail': thumbnail,
+                'duration': duration,
+                'views': views
+            })
+            
+        return render_template('videos.html',video_links=video_links,video_url=video_url)
+    return render_template('videos.html')
     
 
 if __name__ == '__main__':
