@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <h1>Video Downloader</h1>
+        <!-- Video links with download buttons -->
+        {% for i in video_links %}
+        <div>
+            <p>{{ i }}</p>
+            <button onclick="fetchDownloadableLink('{{ i }}')">Download</button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        // Function to fetch downloadable link and trigger the download
+        function fetchDownloadableLink(videoUrl) {
+            fetch(`/get_downloadable_link?video_url=${encodeURIComponent(videoUrl)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.downloadable_link) {
+                        downloadMedia(data.downloadable_link);
+                    } else {
+                        alert('Failed to fetch the downloadable link!');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching the downloadable link:', error);
+                    alert('An error occurred. Please try again.');
+                });
+        }
+
+        // Function to download media
+        function downloadMedia(mediaUrl) {
+            const link = document.createElement('a');
+            link.href = `/download_media?media_url=${encodeURIComponent(mediaUrl)}`;
+            link.download = '';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+
+</html>

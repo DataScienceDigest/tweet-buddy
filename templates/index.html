@@ -110,15 +110,41 @@
         }
     </style>
     <script>
+        // async function searchTweets() {
+        //     const query = document.getElementById("query").value;
+        //     const response = await fetch('/search', {
+        //         method: 'POST',
+        //         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        //         body: `query=${query}`
+        //     });
+        //     const data = await response.json();
+        //     console.log(data,'-------')
+        //     displayTweets(data.tweets, true); // `true` indicates this is a new search
+        // }
         async function searchTweets() {
             const query = document.getElementById("query").value;
-            const response = await fetch('/search', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `query=${query}`
-            });
-            const data = await response.json();
-            displayTweets(data.tweets, true); // `true` indicates this is a new search
+            try {
+                const response = await fetch('/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `query=${query}`
+                });
+
+                if (!response.ok) {
+                    // If the response is not ok (e.g., 401 Unauthorized)
+                    const errorData = await response.json();
+                    console.error('Error fetching tweets:', errorData.error);
+                    alert(`Error: ${errorData.error}`); // Show error to the user
+                    return;
+                }
+
+                const data = await response.json();
+                console.log(data, '-------');
+                displayTweets(data.tweets, true); // `true` indicates this is a new search
+            } catch (err) {
+                console.error('An unexpected error occurred:', err);
+                alert('An unexpected error occurred. Please try again later.');
+            }
         }
 
         async function nextTweets() {

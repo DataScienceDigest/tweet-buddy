@@ -4,10 +4,13 @@ import asyncio
 import nest_asyncio
 import requests
 from flask import send_file
-
 import os
 import tempfile
+from datetime import datetime
+import yt_dlp
 
+# flexcnic
+# Bonegggg
 # Fix nested event loop issue in Flask
 nest_asyncio.apply()
 
@@ -15,7 +18,7 @@ app = Flask(__name__)
 
 # Setup the Twikit client
 client = Client('en-US')
-client.load_cookies(r'@twt666394923-cookies.json')
+client.load_cookies(r'androess31-cookies.json')
 
 # Global event loop and iterator
 loop = asyncio.get_event_loop()
@@ -69,8 +72,6 @@ async def fetch_tweets(query, mode='Top'):
             image_urls, video_urls = [], []  # Default to empty lists
             if media_data is not None:
                 image_urls, video_urls = extract_media_urls(media_data)
-                # print(video_urls,'++++++++++++++++++++')
-            # Create a dictionary for the tweet with its associated media
             tweet_object = {
                 'tweets': i.text,
                 'image_urls': image_urls if image_urls else None,
@@ -78,15 +79,16 @@ async def fetch_tweets(query, mode='Top'):
             }
 
             tweet_objects.append(tweet_object)
+        return tweet_objects
 
     except Exception as e:
         # Handle any exceptions
-        print(f"Error fetching tweets: {e}")
+        error_message = str(e)
+        print(f"Error fetching tweets: {error_message}")
+        # Return the error message to the frontend
+        return jsonify({'error': error_message}), 401
 
-    return tweet_objects
-
-
-
+    
 
 async def fetch_next_tweets():
     """Fetch more tweets."""
@@ -118,7 +120,6 @@ async def fetch_next_tweets():
 
     return tweet_objects
 
-
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -130,8 +131,7 @@ def search():
     query = request.form.get('query')
     # tweets = loop.run_until_complete(fetch_tweets(query))
     tweets_data = loop.run_until_complete(fetch_tweets(query))
-    # print(tweets_data,'-=-=-=')
-    # tweets,image_urls,video_urls = loop.run_until_complete(fetch_tweets(query))
+
     return jsonify(tweets=tweets_data)
     # return jsonify(tweets=tweets,image_urls=image_urls,video_urls=video_urls)
 
@@ -148,7 +148,6 @@ def download_media():
     media_url = request.args.get('media_url')
     if not media_url:
         return "Media URL is required!", 400
-
     try:
         response = requests.get(media_url, stream=True, timeout=(10, 300))
         if response.status_code != 200:
@@ -161,11 +160,12 @@ def download_media():
             filename += '.mp4'
 
         # Use a temporary file to store the media
+        # print(datetime.now().strftime("%H:%M:%S"),'____________+++++++++++++______________')
         with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-            for chunk in response.iter_content(chunk_size=1024 * 1024):  # 1 MB
+            for chunk in response.iter_content(chunk_size=4 * 1024 * 1024):  # 1 MB
                 temp_file.write(chunk)
             temp_file_path = temp_file.name
-
+        # print('after-------------',datetime.now().strftime("%H:%M:%S"),'____________+++++++++++++______________')
         return send_file(
             temp_file_path,
             as_attachment=True,
@@ -174,8 +174,73 @@ def download_media():
         )
     except Exception as e:
         return f"An error occurred: {str(e)}", 500
+# ---------------get downloadable video link ------------------
+# def downloadable_link(video_url):
+#         # video_url = 'https:.com'
+#         print(video_url)
+#         ydl_opts = {
+#             'format': 'best',
+#             # 'outtmpl': '%(title)s.%(ext)s',
+#             'quiet':True,
+#         }
+#         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+#             try:
+#                 info_dict = ydl.extract_info(video_url, download=False)
+#                 if 'entries' in info_dict:
+#                     video_link = info_dict['entries'][0].get('url',None)
+#                 else:
+#                     video_link = info_dict.get('url',None)
+#             except Exception as e:
+#                 print(f'error {e}')
+                
+        
+#         if video_link:
+#             print('Direct video url is : ',video_link)
+#         else:
+#             print('could not retrieve video url')
+#         return video_link
 
+@app.route('/get_downloadable_link', methods=['GET'])
+def get_downloadable_link():
+    video_url = request.args.get('video_url')
+    print(video_url,'================')
+    if not video_url:
+        return jsonify({'success': False, 'error': 'Video URL is required!'}), 400
+
+    try:
+        # Logic to fetch the direct video URL
+        print(video_url)
+        ydl_opts = {
+            'format': 'best',
+            'quiet': True,
+        }
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            try:
+                info_dict = ydl.extract_info(video_url, download=False)
+                if 'entries' in info_dict:
+                    downloadable_link_url = info_dict['entries'][0].get('url', None)
+                else:
+                    downloadable_link_url = info_dict.get('url', None)
+            except Exception as e:
+                return jsonify({'success': False, 'error': f'Error extracting video info: {e}'}), 500
+
+        if downloadable_link_url:
+            return jsonify({'success': True, 'downloadable_link': downloadable_link_url})
+        else:
+            return jsonify({'success': False, 'error': 'Could not retrieve downloadable link!'}), 400
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+# video downloader section
+@app.route('/videos', methods=['GET','POST'])
+def videos():
+    """Fetch next batch of tweets."""
+    # scraping code would go here 
+    video_links= ['https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_video','https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_video','https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_video','https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_video','https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_video','https://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_video']
+        
+    return render_template('videos.html',video_links=video_links)
+    
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=80,debug=True)
+    app.run(host='0.0.0.0',port=80,debug=True,threaded=True)
     # test
