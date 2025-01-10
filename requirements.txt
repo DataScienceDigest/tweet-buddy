@@ -5,3 +5,4 @@ nest-asyncio
 requests
 gunicorn
 beautifulsoup4
+yt-dlp
