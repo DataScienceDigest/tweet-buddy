@@ -246,6 +246,43 @@ def videos():
         return render_template('videos.html',video_links=video_links,video_url=video_url)
     return render_template('videos.html')
     
+# search trending tweets
+async def fetch_trending_tweets(query):
+    tweet_objects = []
+    try:
+        # Fetch initial tweets
+        global tweet_iter
+        # tweet_iter = await client.get_user_by_screen_name(query)
+        tweet_iter = await client.search_tweet(query, 'Top')
+        for i in tweet_iter:
+            media_data = i.media
+            # print(i.media,'_______________&&&&&&&&&')
+            image_urls, video_urls = [], []  # Default to empty lists
+            if media_data is not None:
+                image_urls, video_urls = extract_media_urls(media_data)
+            tweet_object = {
+                'tweets': i.text,
+                'image_urls': image_urls if image_urls else None,
+                'video_urls': video_urls if video_urls else None
+            }
+
+            tweet_objects.append(tweet_object)
+        return tweet_objects
+
+    except Exception as e:
+        # Handle any exceptions
+        error_message = str(e)
+        print(f"Error fetching tweets: {error_message}")
+        # Return the error message to the frontend
+        return jsonify({'error': error_message}), 401
+@app.route('/trending-tweets/query', methods=['GET', 'POST'])
+def trending_tweets():
+    # Retrieve the query parameter from the URL
+    query = request.args.get('query')  # For GET request, query params come from args
+    print(query)  # Debugging purpose
+    # Call the async function to fetch trending tweets
+    twt_objects = asyncio.run(fetch_trending_tweets(query))
+    return twt_objects
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=80,debug=True,threaded=True)
