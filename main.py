@@ -195,6 +195,11 @@ def get_downloadable_link():
         ydl_opts = {
             'format': 'best',
             'quiet': True,
+            'extractor_args': {
+                'generic': {
+                    'impersonate': 'chrome',  # Use Chrome impersonation
+                }
+            },
         }
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             try:
