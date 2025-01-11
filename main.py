@@ -176,30 +176,6 @@ def download_media():
     except Exception as e:
         return f"An error occurred: {str(e)}", 500
 # ---------------get downloadable video link ------------------
-# def downloadable_link(video_url):
-#         # video_url = 'https:.com'
-#         print(video_url)
-#         ydl_opts = {
-#             'format': 'best',
-#             # 'outtmpl': '%(title)s.%(ext)s',
-#             'quiet':True,
-#         }
-#         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-#             try:
-#                 info_dict = ydl.extract_info(video_url, download=False)
-#                 if 'entries' in info_dict:
-#                     video_link = info_dict['entries'][0].get('url',None)
-#                 else:
-#                     video_link = info_dict.get('url',None)
-#             except Exception as e:
-#                 print(f'error {e}')
-                
-        
-#         if video_link:
-#             print('Direct video url is : ',video_link)
-#         else:
-#             print('could not retrieve video url')
-#         return video_link
 
 @app.route('/get_downloadable_link', methods=['GET'])
 def get_downloadable_link():
