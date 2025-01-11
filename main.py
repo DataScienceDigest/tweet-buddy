@@ -10,6 +10,9 @@ from datetime import datetime
 import yt_dlp
 import requests
 from bs4 import BeautifulSoup
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
+
+
 # flexcnic
 # Bonegggg
 # Fix nested event loop issue in Flask
@@ -217,7 +220,7 @@ def videos():
         print(video_url,'===+++======')
         
         # Send a GET request to the website
-        response = requests.get(video_url)
+        response = requests.get(video_url, headers=headers)
 
         # Check if the request was successful
         if response.status_code == 200:
