@@ -10,6 +10,8 @@ from datetime import datetime
 import yt_dlp
 import requests
 from bs4 import BeautifulSoup
+import cloudscraper
+
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
 
 
@@ -218,9 +220,11 @@ def videos():
     if request.method == 'POST':
         video_url = request.form.get('site_url')
         print(video_url,'===+++======')
-        
+        scraper = cloudscraper.create_scraper()  # Automatically handles Cloudflare's challenge
+        response = scraper.get(video_url)
+        print(response.status_code)
         # Send a GET request to the website
-        response = requests.get(video_url, headers=headers)
+        # response = requests.get(video_url, headers=headers)
 
         # Check if the request was successful
         if response.status_code == 200:
