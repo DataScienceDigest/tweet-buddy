@@ -226,22 +226,22 @@ def videos():
             
             li_tags = soup.find_all('li', class_='video')
         
-        # Extract data into a list of dictionaries
-        video_links = []
-        for li in li_tags:
-            link = li.find('a', class_='thumb')['href']
-            title = li.find('a', class_='title').text.strip()
-            thumbnail = li.find('img')['src']
-            duration = li.find('div', class_='time').text.strip()
-            views = li.find('div', class_='view').text.strip()
-            
-            video_links.append({
-                'link': link,
-                'title': title,
-                'thumbnail': thumbnail,
-                'duration': duration,
-                'views': views
-            })
+            # Extract data into a list of dictionaries
+            video_links = []
+            for li in li_tags:
+                link = li.find('a', class_='thumb')['href']
+                title = li.find('a', class_='title').text.strip()
+                thumbnail = li.find('img')['src']
+                duration = li.find('div', class_='time').text.strip()
+                views = li.find('div', class_='view').text.strip()
+                
+                video_links.append({
+                    'link': link,
+                    'title': title,
+                    'thumbnail': thumbnail,
+                    'duration': duration,
+                    'views': views
+                })
             
         return render_template('videos.html',video_links=video_links,video_url=video_url)
     return render_template('videos.html')
