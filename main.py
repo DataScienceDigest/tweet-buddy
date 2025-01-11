@@ -242,11 +242,14 @@ def videos():
                     'duration': duration,
                     'views': views
                 })
+        else:
+            print(response.status_code ,'++++++++++',response)
+
             
         return render_template('videos.html',video_links=video_links,video_url=video_url)
     return render_template('videos.html')
     
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=80,debug=True,threaded=True)
+    app.run(host='0.0.0.0',port=5000,debug=True,threaded=True)
     # test
